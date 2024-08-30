@@ -32,4 +32,20 @@ export const registerUserCtrl = asyncHandler(async (req, res) => {
   });
 
 
-  
+  export const loginUserCtrl = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    //Find the user in db by email only
+    const userFound = await User.findOne({
+      email,
+    });
+    if (userFound && (await bcrypt.compare(password, userFound?.password))) {
+      res.json({
+        status: "success",
+        message: "User logged in successfully",
+        userFound,
+        // token: generateToken(userFound?._id),
+      });
+    } else {
+      throw new Error("Invalid login credentials");
+    }
+  });
