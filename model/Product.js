@@ -70,3 +70,7 @@ const ProductSchema = new Schema(
     toJSON: { virtuals: true },
   }
 );
+
+const Product = mongoose.model("Product", ProductSchema);
+
+export default Product;
