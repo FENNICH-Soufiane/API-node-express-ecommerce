@@ -137,18 +137,18 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
 // @access  Public
 
 export const getProductCtrl = asyncHandler(async (req, res) => {
-    
+
     const product = await Product.findById(req.params.id);
 
     if (!product) {
-      throw new Error("Prouduct not found");
+        throw new Error("Prouduct not found");
     }
     res.json({
-      status: "success",
-      message: "Product fetched successfully",
-      product,
+        status: "success",
+        message: "Product fetched successfully",
+        product,
     });
-  });
+});
 
 // @desc    update  product
 // @route   PUT /api/products/:id/update
@@ -156,22 +156,6 @@ export const getProductCtrl = asyncHandler(async (req, res) => {
 
 export const updateProductCtrl = asyncHandler(async (req, res) => {
     const {
-      name,
-      description,
-      category,
-      sizes,
-      colors,
-      user,
-      price,
-      totalQty,
-      brand,
-    } = req.body;
-    //validation
-  
-    //update
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      {
         name,
         description,
         category,
@@ -181,15 +165,42 @@ export const updateProductCtrl = asyncHandler(async (req, res) => {
         price,
         totalQty,
         brand,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
+    } = req.body;
+    //validation
+
+    //update
+    const product = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+            name,
+            description,
+            category,
+            sizes,
+            colors,
+            user,
+            price,
+            totalQty,
+            brand,
+        },
+        {
+            new: true,
+            runValidators: true,
+        }
     );
     res.json({
-      status: "success",
-      message: "Product updated successfully",
-      product,
+        status: "success",
+        message: "Product updated successfully",
+        product,
     });
-  });
+});
+
+// @desc    delete  product
+// @route   DELETE /api/products/:id/delete
+// @access  Private/Admin
+export const deleteProductCtrl = asyncHandler(async (req, res) => {
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({
+        status: "success",
+        message: "Product deleted successfully",
+    });
+});
