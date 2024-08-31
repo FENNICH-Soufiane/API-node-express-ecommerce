@@ -130,4 +130,18 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
         message: "Products fetched successfully",
         products,
     })
-})
+});
+
+export const getProductCtrl = asyncHandler(async (req, res) => {
+    
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      throw new Error("Prouduct not found");
+    }
+    res.json({
+      status: "success",
+      message: "Product fetched successfully",
+      product,
+    });
+  });
