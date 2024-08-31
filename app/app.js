@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.use("/api/v1/users/", userRoutes);
 app.use("/api/v1/products/", productsRoutes);
+app.use("/api/v1/categories/", productsRoutes);
 
 app.use(notFound);
 app.use(globalErrhandler);
