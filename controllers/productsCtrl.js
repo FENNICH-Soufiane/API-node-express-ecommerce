@@ -132,6 +132,10 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
     })
 });
 
+// @desc    Get single product
+// @route   GET /api/products/:id
+// @access  Public
+
 export const getProductCtrl = asyncHandler(async (req, res) => {
     
     const product = await Product.findById(req.params.id);
