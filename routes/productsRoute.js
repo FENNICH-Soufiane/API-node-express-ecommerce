@@ -7,6 +7,7 @@ const productsRoutes = express.Router();
 
 productsRoutes.post('/', isLoggedIn, createProductCtrl);
 productsRoutes.get('/', getProductsCtrl);
+productsRoutes.get('/', getProductsCtrl);
 
 
 export default productsRoutes;

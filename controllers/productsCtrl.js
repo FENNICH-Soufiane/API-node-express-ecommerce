@@ -1,4 +1,4 @@
-import asyncHandler  from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import Product from "../model/Product.js";
 
 
@@ -38,8 +38,21 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
 // @desc    Get all products
 // @route   GET /api/v1/products
 // @access  Public
-export const getProductsCtrl = asyncHandler (async(req, res) => {
-    const products = await Product.find();
+export const getProductsCtrl = asyncHandler(async (req, res) => {
+
+    let productQuery = Product.find();
+
+
+
+    //search by name
+    if (req.query.name) {
+        productQuery = productQuery.find({
+            name: { $regex: req.query.name, $options: "i" },
+        });
+    }
+
+    const products = await productQuery;
+
     res.json({
         status: "success",
         products
