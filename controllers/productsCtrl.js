@@ -105,10 +105,29 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
 
     productQuery = productQuery.skip(startIndex).limit(limit);
 
+    //pagination results
+    const pagination = {};
+    if (endIndex < total) {
+        pagination.next = {
+            page: page + 1,
+            limit,
+        };
+    }
+    if (startIndex > 0) {
+        pagination.prev = {
+            page: page - 1,
+            limit,
+        };
+    }
+
     const products = await productQuery;
 
     res.json({
         status: "success",
-        products
+        total,
+        results: products.length,
+        pagination,
+        message: "Products fetched successfully",
+        products,
     })
 })
