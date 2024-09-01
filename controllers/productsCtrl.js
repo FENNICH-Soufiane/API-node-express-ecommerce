@@ -113,6 +113,13 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
         });
     }
 
+    //filter by color
+    if (req.query.color) {
+        productQuery = productQuery.find({
+            colors: { $regex: req.query.color, $options: "i" },
+        });
+    }
+
     //filter by price range
     if (req.query.price) {
         const priceRange = req.query.price.split("-");
