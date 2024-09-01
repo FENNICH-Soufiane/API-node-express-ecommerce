@@ -1,6 +1,6 @@
 import exppress from "express";
 import { isLoggedIn } from "../middlewares/isLoggedIn.js";
-import { deleteBrandCtrl, updateBrandCtrl, getSingleBrandCtrl, getAllBrandsCtrl, createBrandCtrl } from "../controllers/brandCtrl.js";
+import { deleteBrandCtrl, updateBrandCtrl, getSingleBrandCtrl, getAllBrandsCtrl, createBrandCtrl } from "../controllers/brandsCtrl.js";
 
 const brandsRouter = exppress.Router();
 
