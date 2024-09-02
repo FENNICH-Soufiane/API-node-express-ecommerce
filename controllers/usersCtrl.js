@@ -72,3 +72,46 @@ export const getUserProfileCtrl = asyncHandler(async (req, res) => {
     // user,
   });
 });
+
+
+// @desc    Update user shipping address
+// @route   PUT /api/v1/users/update/shipping
+// @access  Private
+
+export const updateShippingAddresctrl = asyncHandler(async (req, res) => {
+  const {
+    firstName,
+    lastName,
+    address,
+    city,
+    postalCode,
+    province,
+    phone,
+    country,
+  } = req.body;
+  const user = await User.findByIdAndUpdate(
+    req.userAuthId,
+    {
+      shippingAddress: {
+        firstName,
+        lastName,
+        address,
+        city,
+        postalCode,
+        province,
+        phone,
+        country,
+      },
+      hasShippingAddress: true,
+    },
+    {
+      new: true,
+    }
+  );
+  //send response
+  res.json({
+    status: "success",
+    message: "User shipping address updated successfully",
+    user,
+  });
+});
