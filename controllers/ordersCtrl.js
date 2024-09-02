@@ -50,6 +50,9 @@ export const createOrderCtrl = expressAsyncHandler(async (req, res) => {
 
 
     res.json({
-        msg: "Order Ctrl"
+        success: true,
+        message: "Order created",
+        order,
+        user
     })
 })
