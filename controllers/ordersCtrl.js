@@ -82,3 +82,18 @@ export const createOrderCtrl = expressAsyncHandler(async (req, res) => {
     });
     res.send({ url: session.url });
 });
+
+
+//@desc get all orders
+//@route GET /api/v1/orders
+//@access private
+
+export const getAllordersCtrl = expressAsyncHandler(async (req, res) => {
+    //find all orders
+    const orders = await Order.find().populate("user");
+    res.json({
+      success: true,
+      message: "All orders",
+      orders,
+    });
+  });
