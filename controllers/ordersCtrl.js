@@ -37,14 +37,18 @@ export const createOrderCtrl = expressAsyncHandler(async (req, res) => {
     });
 
     //Update the product qty
-    const products = await Product.find({ _id: { $in: orderItems } });
+    // const products = await Product.find({ _id: { $in: orderItems } });
 
-    orderItems?.map(async (order) => {
+    const productIds = orderItems.map(item => item.id); // Extraire uniquement les IDs des produits
+
+    const products = await Product.find({ _id: { $in: productIds } });
+
+    orderItems?.map(async (orderItem) => {
         const product = products?.find((product) => {
-            return product?._id?.toString() === order?._id?.toString();
+            return product?._id?.toString() === orderItem.id; // Comparer les IDs
         });
         if (product) {
-            product.totalSold += order.qty;
+            product.totalSold += orderItem.qty;
         }
         await product.save();
     });
