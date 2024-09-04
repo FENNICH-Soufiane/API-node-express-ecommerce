@@ -41,7 +41,8 @@ const OrderSchema = new Schema(
       type: String,
       default: "Not specified",
     },
-    //For admin
+    
+    //For Admin
     status: {
       type: String,
       default: "pending",

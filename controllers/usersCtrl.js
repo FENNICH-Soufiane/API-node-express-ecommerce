@@ -63,7 +63,7 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
 
 export const getUserProfileCtrl = asyncHandler(async (req, res) => {
   //find the user
-  const user = await User.findById(req.userAuthId)
+  const user = await User.findById(req.userAuthId).populate('orders');
   console.log(req);
 
   res.json({
