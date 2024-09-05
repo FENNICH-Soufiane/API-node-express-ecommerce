@@ -15,6 +15,22 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 //@access private
 export const createOrderCtrl = asyncHandler(async (req, res) => {
 
+    // //get teh coupon
+    const { coupon } = req?.query;
+
+    const couponFound = await Coupon.findOne({
+        code: coupon?.toUpperCase(),
+    });
+    if (couponFound?.isExpired) {
+        throw new Error("Coupon has expired");
+    }
+    if (!couponFound) {
+        throw new Error("Coupon does exists");
+    }
+
+    //get discount
+    const discount = couponFound?.discount / 100;
+
     const { orderItems, shippingAddress, totalPrice } = req.body;
     console.log(req.body);
     //Find the user
@@ -33,8 +49,8 @@ export const createOrderCtrl = asyncHandler(async (req, res) => {
         user: user?._id,
         orderItems,
         shippingAddress,
-        // totalPrice: couponFound ? totalPrice - totalPrice * discount : totalPrice,
-        totalPrice,
+        totalPrice: couponFound ? totalPrice - totalPrice * discount : totalPrice,
+        // totalPrice,
     });
 
     //Update the product qty
@@ -126,17 +142,17 @@ export const updateOrderCtrl = asyncHandler(async (req, res) => {
     const id = req.params.id;
     //update
     const updatedOrder = await Order.findByIdAndUpdate(
-      id,
-      {
-        status: req.body.status,
-      },
-      {
-        new: true,
-      }
+        id,
+        {
+            status: req.body.status,
+        },
+        {
+            new: true,
+        }
     );
     res.status(200).json({
-      success: true,
-      message: "Order updated",
-      updatedOrder,
+        success: true,
+        message: "Order updated",
+        updatedOrder,
     });
-  });
+});
