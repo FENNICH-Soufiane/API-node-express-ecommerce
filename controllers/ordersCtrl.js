@@ -44,7 +44,7 @@ export const createOrderCtrl = asyncHandler(async (req, res) => {
         throw new Error("No Order Items");
     }
 
-    //Place/create order - save into DB
+    //Place/create order - save into DB 
     const order = await Order.create({
         user: user?._id,
         orderItems,
