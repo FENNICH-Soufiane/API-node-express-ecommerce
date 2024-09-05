@@ -21,7 +21,7 @@ export const createCouponCtrl = asyncHandler(async (req, res) => {
   }
   //create coupon
   const coupon = await Coupon.create({
-    code: code,
+    code: code?.toUppercase(),
     startDate,
     endDate,
     discount,
