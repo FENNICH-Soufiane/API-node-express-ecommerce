@@ -168,11 +168,21 @@ export const getOrderStatsCtrl = asyncHandler(async (req, res) => {
       {
          $group: {
             _id: null,
+            minimumSale: {
+               $min: "$totalPrice",
+            },
             totalSales: {
                $sum: "$totalPrice",
             },
-         }
-      }])
+            maxSale: {
+               $max: "$totalPrice",
+            },
+            avgSale: {
+               $avg: "$totalPrice",
+            },
+         },
+      },
+   ]);
 
    //send response
    res.status(200).json({
