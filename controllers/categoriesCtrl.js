@@ -6,6 +6,9 @@ import Category from "../model/Category.js";
 // @access  Private/Admin
 export const createCategoryCtrl = asyncHandler(async (req, res) => {
     const { name } = req.body;
+    if (!req.file) {
+        return res.status(400).json({ message: "Image is required" });
+      }
     //category exists
     const categoryFound = await Category.findOne({ name });
     if (categoryFound) {
@@ -15,7 +18,7 @@ export const createCategoryCtrl = asyncHandler(async (req, res) => {
     const category = await Category.create({
         name: name?.toLowerCase(),
         user: req.userAuthId,
-        image: req.file.path
+        image: req?.file?.path
     });
 
     res.json({

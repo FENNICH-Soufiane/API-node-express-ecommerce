@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dbConnect from "../config/dbConnect.js";
 import userRoutes from "../routes/usersRoute.js";
 import {globalErrhandler, notFound} from "../middlewares/globalErrHandler.js"
@@ -16,7 +17,8 @@ dbConnect();
 
 const app = express();
 
-
+// cors
+app.use(cors());
 
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
@@ -34,7 +36,7 @@ app.post(
 
     try {
       event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-      console.log(event);
+      // console.log(event);
     } catch (err) {
       console.log("err", err.message);
       response.status(400).send(`Webhook Error: ${err.message}`);
@@ -61,7 +63,7 @@ app.post(
           new: true,
         }
       );
-      console.log(order);
+      // console.log(order);
     } else {
       return;
     }
@@ -92,7 +94,14 @@ app.use("/api/v1/reviews/", reviewRouter);
 app.use("/api/v1/orders/", orderRouter);
 app.use("/api/v1/coupons/", couponsRouter);
 
+
+
 app.use(notFound);
 app.use(globalErrhandler);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send(err);
+});
 
 export default app;

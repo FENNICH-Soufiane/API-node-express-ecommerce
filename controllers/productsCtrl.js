@@ -9,9 +9,9 @@ import Brand from "../model/Brand.js";
 // @access  Private/Admin
 export const createProductCtrl = asyncHandler(async (req, res) => {
 
-    const convertedImgs = req.files.map((file) => file?.path);
+    const convertedImgs = req.files?.map((file) => file?.path);
 
-    console.log(req.body);
+    // console.log(req.body);
     const { name, description, category, sizes, colors, price, totalQty, brand } = req.body;
 
     //Product exists
@@ -52,7 +52,7 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
         price,
         totalQty,
         brand,
-        images: convertedImgs,
+        files: convertedImgs,
     });
 
     //push the product into category
@@ -183,7 +183,11 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
 
 export const getProductCtrl = asyncHandler(async (req, res) => {
 
-    const product = await Product.findById(req.params.id).populate('reviews');
+    // const product = await Product.findById(req.params.id).populate('reviews');
+    const product = await Product.findById(req.params.id).populate({
+        path: "reviews",
+        populate: {path: "user", select: "fullname"}
+    });
 
     if (!product) {
         throw new Error("Prouduct not found");

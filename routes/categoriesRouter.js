@@ -5,7 +5,7 @@ import catetgoryFileUpload from "../config/categoryUpload.js";
 
 const categoriesRouter = exppress.Router();
 
-categoriesRouter.post("/", isLoggedIn, catetgoryFileUpload.single("file"), createCategoryCtrl);
+categoriesRouter.post("/", isLoggedIn, catetgoryFileUpload.single("image"), createCategoryCtrl);
 categoriesRouter.get("/", getAllCategoriesCtrl);
 categoriesRouter.get("/:id", getSingleCategoryCtrl);
 categoriesRouter.delete("/:id", deleteCategoryCtrl);

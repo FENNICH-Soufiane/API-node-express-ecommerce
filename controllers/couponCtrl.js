@@ -6,7 +6,7 @@ import Coupon from "../model/Coupon.js";
 
 export const createCouponCtrl = asyncHandler(async (req, res) => {
   const { code, startDate, endDate, discount } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   //check if admin
   //check if coupon already exists
   const couponsExists = await Coupon.findOne({
@@ -21,7 +21,7 @@ export const createCouponCtrl = asyncHandler(async (req, res) => {
   }
   //create coupon
   const coupon = await Coupon.create({
-    code: code?.toUppercase(),
+    code: code?.toUpperCase(),
     startDate,
     endDate,
     discount,
@@ -62,7 +62,13 @@ export const getCouponCtrl = asyncHandler(async (req, res) => {
   }
   //check if expired
   if (coupon.isExpired) {
-    throw new Error("Coupon Expired");
+    // throw new Error("Coupon Expired");
+    // Option 1: Send the coupon data anyway, with a warning
+    return res.json({
+      status: "warning",
+      message: "Coupon is expired",
+      coupon, // Still send the coupon details
+    });
   }
   res.json({
     status: "success",

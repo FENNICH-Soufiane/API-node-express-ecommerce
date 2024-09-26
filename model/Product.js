@@ -36,7 +36,7 @@ const ProductSchema = new Schema(
       ref: "User",
     },
 
-    images: [
+    files: [
       {
         type: String,
         required: true,
@@ -74,7 +74,7 @@ const ProductSchema = new Schema(
 //qty left
 ProductSchema.virtual("qtyLeft").get(function () {
   const product = this;
-  return product.totalQty - product.totalSold;
+  return product?.totalQty - product?.totalSold;
 });
 
 // Total rating

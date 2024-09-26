@@ -49,7 +49,10 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
     res.json({
       status: "success",
       message: "User logged in successfully",
-      userFound,
+      // userFound: {
+      //   fullname: userFound?.fullname,
+      //   isAdmin: userFound?.isAdmin
+      // },
       token: generateToken(userFound?._id),
     });
   } else {
@@ -64,7 +67,7 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
 export const getUserProfileCtrl = asyncHandler(async (req, res) => {
   //find the user
   const user = await User.findById(req.userAuthId).populate('orders');
-  console.log(req);
+  // console.log(req);
 
   res.json({
     status: "success",

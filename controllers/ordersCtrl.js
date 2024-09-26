@@ -10,71 +10,60 @@ import Product from "../model/Product.js";
 // Stripe
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
-//@desc create orders
-//@route POST /api/v1/orders
-//@access private
 export const createOrderCtrl = asyncHandler(async (req, res) => {
-
-   // //get teh coupon
-   const { coupon } = req?.query;
-
-   const couponFound = await Coupon.findOne({
-      code: coupon?.toUpperCase(),
-   });
-   if (couponFound?.isExpired) {
-      throw new Error("Coupon has expired");
-   }
-   if (!couponFound) {
-      throw new Error("Coupon does exists");
-   }
-
-   //get discount
-   const discount = couponFound?.discount / 100;
-
    const { orderItems, shippingAddress, totalPrice } = req.body;
-   console.log(req.body);
-   //Find the user
+
+   // Trouver l'utilisateur
    const user = await User.findById(req.userAuthId);
-   //Check if user has shipping address
+   // Vérifier si l'utilisateur a une adresse de livraison
    if (!user?.hasShippingAddress) {
-      throw new Error("Please provide shipping address");
+      throw new Error("Veuillez fournir une adresse de livraison");
    }
-   //Check if order is not empty
+   // Vérifier si la commande n'est pas vide
    if (orderItems?.length <= 0) {
-      throw new Error("No Order Items");
+      throw new Error("Pas d'articles dans la commande");
    }
 
-   //Place/create order - save into DB 
+   // Créer la commande et la sauvegarder dans la base de données
    const order = await Order.create({
       user: user?._id,
       orderItems,
       shippingAddress,
-      totalPrice: couponFound ? totalPrice - totalPrice * discount : totalPrice,
-      // totalPrice,
+      totalPrice,
    });
 
-   //Update the product qty
-   // const products = await Product.find({ _id: { $in: orderItems } });
-
-   const productIds = orderItems.map(item => item.id); // Extraire uniquement les IDs des produits
-
+   // Récupérer les IDs des produits commandés
+   const productIds = orderItems.map(item => item.id);
    const products = await Product.find({ _id: { $in: productIds } });
 
-   orderItems?.map(async (orderItem) => {
-      const product = products?.find((product) => {
-         return product?._id?.toString() === orderItem.id; // Comparer les IDs
-      });
-      if (product) {
-         product.totalSold += orderItem.qty;
-      }
-      await product.save();
-   });
-   //push order into user
+   // Mettre à jour la quantité vendue et la quantité en stock pour chaque produit
+   await Promise.all(
+      orderItems.map(async (orderItem) => {
+         const product = products.find(product => product?._id?.toString() === orderItem.id);
+         if (!product) {
+            console.error(`Produit avec ID ${orderItem.id} non trouvé`);
+         } else {
+            console.log(`Mise à jour du produit : ${product._id}`);
+            product.totalSold += orderItem.qty;
+            
+            // Réduire la quantité en stock
+            product.countInStock -= orderItem.qty;
+            
+            // Vérifier si la quantité en stock devient négative
+            if (product.countInStock < 0) {
+               throw new Error(`Le stock du produit ${product.name} est insuffisant`);
+            }
+            
+            await product.save();
+         }
+      })
+   );
+
+   // Ajouter la commande à l'utilisateur
    user.orders.push(order?._id);
    await user.save();
 
-   //make payment (stripe)
-   //convert order items to have same structure that stripe need
+   // Effectuer le paiement avec Stripe
    const convertedOrders = orderItems.map((item) => {
       return {
          price_data: {
@@ -97,6 +86,7 @@ export const createOrderCtrl = asyncHandler(async (req, res) => {
       success_url: "http://localhost:3000/success",
       cancel_url: "http://localhost:3000/cancel",
    });
+
    res.send({ url: session.url });
 });
 
